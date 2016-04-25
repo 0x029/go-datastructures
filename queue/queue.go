@@ -58,40 +58,45 @@ import (
 	"time"
 )
 
-type waiters []*sema
+type waiters []*sema		//custom data type
 
+//get the element of the queue, sema is the element
 func (w *waiters) get() *sema {
-	if len(*w) == 0 {
+	if len(*w) == 0 { 	//if length is 0
 		return nil
 	}
 
-	sema := (*w)[0]
-	copy((*w)[0:], (*w)[1:])
-	(*w)[len(*w)-1] = nil // or the zero value of T
-	*w = (*w)[:len(*w)-1]
-	return sema
+	sema := (*w)[0]		//get the first element
+	copy((*w)[0:], (*w)[1:])	//make the new memory of the slice??
+	
+	//make the last element of the slice to be null
+	(*w)[len(*w)-1] = nil // or the zero value of T 
+	
+	*w = (*w)[:len(*w)-1] 	//get the last put element of the slice???
+	return sema  	//return element what we get..
 }
 
+//put the element to the slice
 func (w *waiters) put(sema *sema) {
 	*w = append(*w, sema)
 }
 
-type items []interface{}
+type items []interface{}	//declara items slice
 
 func (items *items) get(number int64) []interface{} {
-	returnItems := make([]interface{}, 0, number)
+	returnItems := make([]interface{}, 0, number)	//declara the returnItems slice
 	index := int64(0)
 	for i := int64(0); i < number; i++ {
-		if i >= int64(len(*items)) {
+		if i >= int64(len(*items)) {	//check the length of the items
 			break
 		}
 
-		returnItems = append(returnItems, (*items)[i])
-		(*items)[i] = nil
-		index++
+		returnItems = append(returnItems, (*items)[i])	//append slice returnItems
+		(*items)[i] = nil	//make the items to be null what has get
+		index++	
 	}
 
-	*items = (*items)[index:]
+	*items = (*items)[index:]		//change the items, take out the items what has append
 	return returnItems
 }
 
